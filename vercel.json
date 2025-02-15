@@ -12,5 +12,6 @@
             "dest": "/",
             "methods": ["GET", "POST"]
         }
-    ]
+    ],
+    "ignore": ["index.html", "chatgpt_estimations.png"]
 }

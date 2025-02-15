@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Responsive Input Page</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body
+        class="bg-gray-900 text-white flex flex-col justify-center items-center min-h-screen"
+    >
+        <h3
+            class="text-center text-xl font-semibold mb-6 underline underline-offset-8"
+        >
+            From JavaScript Fetch Request to Bypass Cors Fetch Request!
+        </h3>
+        <div class="max-w-5xl w-full p-6">
+            <div class="flex flex-col md:flex-row gap-4">
+                <textarea
+                    class="w-full md:w-1/2 p-3 bg-gray-800 rounded focus:outline-none focus:ring-2 focus:ring-dodgerBlue min-h-60"
+                    id="js-fetch"
+                    placeholder="Paste JavaScript Fetch Here..."
+                ></textarea>
+                <button
+                    onclick="convertFetch()"
+                    class="bg-[dodgerBlue] text-white px-4 py-2 rounded md:hidden"
+                >
+                    Submit
+                </button>
+                <textarea
+                    id="no-cors-fetch"
+                    class="w-full md:w-1/2 p-3 bg-gray-800 rounded focus:outline-none focus:ring-2 focus:ring-dodgerBlue min-h-60"
+                    placeholder="Result will Come here..."
+                ></textarea>
+            </div>
+            <div class="mt-4 w-full hidden md:block">
+                <button
+                    onclick="convertFetch()"
+                    class="bg-[dodgerBlue] w-full text-lg hover:bg-blue-600 text-white py-3 rounded"
+                >
+                    Submit
+                </button>
+            </div>
+        </div>
+
+        <script>
+            const jsFetch = document.getElementById("js-fetch");
+            const noCorsFetch = document.getElementById("no-cors-fetch");
+
+            const extractFetchDetails = (fetchString) => {
+                const fetchRegex =
+                    /fetch\(['"](.+?)['"](?:,\s*({[\s\S]*?}))?\)/;
+                const match = fetchString.match(fetchRegex);
+
+                if (match) {
+                    const url = match[1];
+                    const options = match[2] ? JSON.parse(match[2]) : {}; // Returns {} if options are missing
+                    return { url, options };
+                } else {
+                    return { error: "Invalid fetch request format" };
+                }
+            };
+
+            const generateNoCorsFetchRequest = (targetUrl, targetOptions) => {
+                if (Object.keys(targetOptions).length === 0) {
+                    return `fetch("https://bypass-cors.vercel.app/?url=${encodeURIComponent(
+                        targetUrl
+                    )}");`;
+                }
+
+                const request = `fetch("https://bypass-cors.vercel.app", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+        url: "${targetUrl}",
+        options: ${JSON.stringify(targetOptions, null, 4)}
+    })
+});`;
+                return request;
+            };
+
+            const convertFetch = () => {
+                if (jsFetch.value.trim() === "") {
+                    noCorsFetch.value = "No code to convert";
+                    return;
+                }
+
+                const { url, options } = extractFetchDetails(jsFetch.value);
+                if (url === undefined) {
+                    noCorsFetch.value = "Invalid fetch request format";
+                    return;
+                }
+
+                const generatedNoCors = generateNoCorsFetchRequest(
+                    url,
+                    options
+                );
+
+                noCorsFetch.value = generatedNoCors;
+            };
+        </script>
+    </body>
+</html>

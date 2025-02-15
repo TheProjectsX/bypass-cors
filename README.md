@@ -26,6 +26,9 @@ fetch("https://bypass-cors.vercel.app/?url=https://your-target-cors-url.com");
 ```node js
 fetch("https://bypass-cors.vercel.app", {
     method: "POST",
+    headers: {
+        "content-type": "application/json",
+    },
     body: JSON.stringify({
         url: "https://your-target-cors-url.com",
         options: {

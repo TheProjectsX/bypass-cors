@@ -13,7 +13,7 @@ app.use(express.json());
 app.get("/", async (req, res) => {
     const url = req.query.url;
     if (!url) {
-        res.status(400).send("URL is required");
+        return res.status(400).send("URL is required");
     }
 
     try {
@@ -52,9 +52,10 @@ app.post("/", async (req, res) => {
     let data = req.body;
     let url = data?.url;
     let options = data?.options ?? {};
+    console.log(data);
 
     if (!url) {
-        res.status(400).send("URL is required");
+        return res.status(400).send("URL is required");
     }
 
     try {
