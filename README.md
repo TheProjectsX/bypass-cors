@@ -42,6 +42,11 @@ fetch("https://bypass-cors.vercel.app", {
 });
 ```
 
+### OR:
+
+You can simply use this Page to Convert from JS Fetch to No Cors Fetch (by JS Fetch, I mean regular Fetch):
+[https://modasser.is-a.dev/bypass-cors/](https://modasser.is-a.dev/bypass-cors/)
+
 ### Simplified:
 
 For any method except GET, just think of the body of the request as your `fetch` function's parameters!
