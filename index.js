@@ -17,12 +17,10 @@ app.get("/", async (req, res) => {
     }
 
     try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(
-                `HTTP Error ${response.status}: ${response.statusText}`
-            );
-        }
+        const response = await fetch(url, {
+            method: "GET",
+            headers: req.headers,
+        });
 
         // Clone headers from the original response
         const excludeHeaders = [
@@ -39,8 +37,9 @@ app.get("/", async (req, res) => {
             }
         }
 
-        const responseData = await response.text();
-        res.status(response.status).send(responseData);
+        res.status(response.status);
+        const buffer = Buffer.from(await response.arrayBuffer());
+        res.send(buffer);
     } catch (error) {
         res.status(500).send(error.message);
     }
@@ -52,7 +51,6 @@ app.post("/", async (req, res) => {
     let data = req.body;
     let url = data?.url;
     let options = data?.options ?? {};
-    console.log(data);
 
     if (!url) {
         return res.status(400).send("URL is required");
@@ -60,12 +58,6 @@ app.post("/", async (req, res) => {
 
     try {
         const response = await fetch(url, options);
-        if (!response.ok) {
-            throw new Error(
-                `HTTP Error ${response.status}: ${response.statusText}`
-            );
-        }
-
         // Clone headers from the original response
         const excludeHeaders = [
             "transfer-encoding",
@@ -81,11 +73,20 @@ app.post("/", async (req, res) => {
             }
         }
 
-        const responseData = await response.text();
-        res.status(response.status).send(responseData);
+        res.status(response.status);
+        const buffer = Buffer.from(await response.arrayBuffer());
+        res.send(buffer);
     } catch (error) {
         res.status(500).send(error.message);
     }
+});
+
+app.use((err, req, res, next) => {
+    res.status(400).send({
+        success: false,
+        message: "Error Occurred",
+        error: err.message ?? "Request Error",
+    });
 });
 
 app.listen(port, () => {
